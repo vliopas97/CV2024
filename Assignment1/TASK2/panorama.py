@@ -35,7 +35,7 @@ def get_simple(images: List[np.ndarray], width: int, height: int, H: List[np.nda
     
     # student_code start
     
-    result = np.zeros((height, width, 3), dtype=np.uint8)
+    result = np.zeros((height, width, 3), dtype=np.uint32)
 
     for i, image in enumerate(images):
         transform = np.matmul(T, H[i])
@@ -43,7 +43,6 @@ def get_simple(images: List[np.ndarray], width: int, height: int, H: List[np.nda
         result += imageTransformed
 
     # student_code end
-        
     return result
 
 
