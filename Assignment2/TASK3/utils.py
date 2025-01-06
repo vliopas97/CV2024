@@ -41,6 +41,6 @@ def plot_confusion_matrix(gt_labels, predicted, accuracy, class_names, group_no=
     ax.set_title("test accuracy=" + str(accuracy))
     if name is not None and group_no is not None:
         ax.set_title(str(group_no) + ": test accuracy=" + str(accuracy))
-        plt.savefig(os.path.join(os.getcwd(), 'results', name))
+        plt.savefig(os.path.join(os.getcwd(), 'results', name), bbox_inches='tight')
 
     plt.show()

@@ -1,5 +1,5 @@
 # TUWIEN - WS2024 CV: Task3 - Scene recognition using Bag of Visual Words
-# *********+++++++++*******++++INSERT GROUP NO. HERE++++*******+++++++++*********
+# *********+++++++++*******++++ GROUP NO. 06++++*******+++++++++*********
 import glob
 import os
 import cv2
@@ -35,7 +35,6 @@ class SceneDataset:
                     # Read the image in grayscale
                     img = cv2.imread(imgFile, cv2.IMREAD_GRAYSCALE)
                     if img is not None:
-                        img = img / 255.0
                         img_data.append(img)
                         labels.append(idx)
         # student_code end

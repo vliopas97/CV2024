@@ -1,5 +1,5 @@
 # TUWIEN - WS2024 CV: Task3 - Scene recognition using Bag of Visual Words
-# *********+++++++++*******++++INSERT GROUP NO. HERE
+# *********+++++++++*******++++GROUP NO. 06
 from typing import List
 import sklearn
 import sklearn.metrics.pairwise as sklearn_pairwise
@@ -7,6 +7,8 @@ import cv2
 import numpy as np
 import random
 import time
+
+import sklearn.preprocessing
 
 
 def extract_dsift(images: List[np.ndarray], stepsize: int, num_samples: int = None) -> List[np.ndarray]:
@@ -40,16 +42,14 @@ def extract_dsift(images: List[np.ndarray], stepsize: int, num_samples: int = No
         for y in range(0, h, stepsize):
             for x in range(0, w, stepsize):
                 keypoints.append(cv2.KeyPoint(x, y, stepsize))
+
+        if num_samples is not None:
+            keypoints = random.sample(keypoints, min(num_samples, len(keypoints)))
         
-        # Compute descriptors for the keypoints
         img = img.astype(np.uint8)
         _, descriptors = sift.compute(img, keypoints)
-        
-        if num_samples is not None and len(descriptors) > num_samples:
-            descriptors = descriptors[np.random.choice(descriptors.shape[0], num_samples, replace=False)]
-            all_descriptors.append(descriptors)
-        else:
-            all_descriptors.append(descriptors)
+
+        all_descriptors.append(descriptors)
             
     # student_code end
 
@@ -90,6 +90,7 @@ def count_visual_words(dense_feat: List[np.ndarray], centroids: List[np.ndarray]
         
         histograms.append(histogram)
 
+
     # student_code end
 
     toc = time.perf_counter()
@@ -118,7 +119,25 @@ def calculate_vlad_descriptors(dense_feat: List[np.ndarray], centroids: List[np.
 
     
     # student_code start
-    raise NotImplementedError("TO DO in features.py")
+    
+    image_descriptors = []
+    num_clusters, descriptor_dim = centroids.shape
+
+    for img_descriptors in dense_feat:
+        vlad_vector = np.zeros((num_clusters, descriptor_dim), dtype=np.float32)
+
+        distances = sklearn_pairwise.pairwise_distances(img_descriptors, centroids)
+        closest_centroids = np.argmin(distances, axis=1)
+
+        for i, cluster_idx in enumerate(closest_centroids):
+            residual = img_descriptors[i] - centroids[cluster_idx]
+            vlad_vector[cluster_idx] += residual
+
+        vlad_vector = vlad_vector.flatten()
+        vlad_vector = sklearn.preprocessing.normalize(vlad_vector.reshape(1, -1), norm='l2').flatten()
+
+        image_descriptors.append(vlad_vector)
+
     # student_code end
     
 
