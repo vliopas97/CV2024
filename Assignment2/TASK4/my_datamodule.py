@@ -56,7 +56,22 @@ class DataModule:
         data_transforms = None
 
         # student code start
-        raise NotImplementedError("TO DO in my_datamodule.py")
+        if train and self.augmented:
+            data_transforms = transforms.Compose([
+                transforms.Lambda(lambda img: img.convert("RGB")), 
+                transforms.Resize((self.img_size, self.img_size)),
+                transforms.RandomHorizontalFlip(),
+                transforms.RandomAffine(degrees=15, translate=(0.1, 0.1)),
+                transforms.ToTensor(),
+                transforms.Normalize((0.5,), (0.5,))
+            ])
+        else:
+            data_transforms = transforms.Compose([
+                transforms.Lambda(lambda img: img.convert("RGB")), 
+                transforms.Resize((self.img_size, self.img_size)),
+                transforms.ToTensor(),
+                transforms.Normalize((0.5,), (0.5,))
+            ])
         # student code end
 
         return data_transforms
